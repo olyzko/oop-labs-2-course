@@ -76,5 +76,58 @@ public:
     }
 
 
+
+    bool isConnected () {
+        int source = 0;
+        bool visited[vertices];
+        for (int i=0; i<vertices; i++)
+            visited[i] = false;
+
+        DFS(source, visited);
+
+        for (int i=1; i<vertices; i++)
+            if (!visited[i])
+                return false;
+        return true;
+    }
+
+    void DFS (int source, bool *visited) {
+        visited[source] = true;
+        for (int i=0; i<vertices; ++i)
+            if (!visited[i])
+                DFS(i, visited);
+    }
+
+    std::vector<int> Dijkstra (int start, int finish, int N) {
+        std::vector<int> d (N, INT_MAX),  p (N);
+        d[start] = 0;
+        std::vector<char> u (N);
+        for (int i=0; i<N; ++i) {
+            int v = -1;
+            for (int j=0; j<N; ++j)
+                if (!u[j] && (v == -1 || d[j] < d[v]))
+                    v = j;
+            if (d[v] == INT_MAX)
+                break;
+            u[v] = true;
+
+            for (size_t j=0; j<adjacencyList[v].size(); ++j) {
+                int to = adjacencyList[v][j].first,
+                        len = adjacencyList[v][j].second;
+                if (d[v] + len < d[to]) {
+                    d[to] = d[v] + len;
+                    p[to] = v;
+                }
+            }
+        }
+        std::vector<int> path;
+        path.push_back (finish);
+        for (int v=finish; v!=start;) {v=p[v];
+            path.push_back (v);}
+        std::reverse (path.begin(), path.end());
+        path.push_back(d[finish]);
+
+        return path;
+    }
 };
 
