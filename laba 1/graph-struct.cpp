@@ -17,7 +17,7 @@ void GraphStruct<Edge, Vertice>::printGraph () {
 }
 
 template<typename Edge, typename Vertice>
-void GraphStruct<Edge, Vertice>::addEdge (Vertice v1, Vertice v2, int weight) {
+void GraphStruct<Edge, Vertice>::addEdge (Vertice v1, Vertice v2, Edge weight) {
     bool already_in_graph = false;
     for (int edge = 0; edge < adjacencyList[v1].size(); edge++) {
         if (adjacencyList[v1][edge].first == v2) {

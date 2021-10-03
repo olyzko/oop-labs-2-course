@@ -25,7 +25,7 @@ public:
 
     void printGraph ();
 
-    void addEdge (Vertice v1, Vertice v2, int weight);
+    void addEdge (Vertice v1, Vertice v2, Edge weight);
 
     void deleteEdge (Vertice v1, Vertice v2);
 
