@@ -34,11 +34,15 @@ public:
 
     void deleteEdge (Vertice v1, Vertice v2);
 
+    
+
     void BFS(Vertice source);
 
     void DFS (Vertice st, bool *visited);
 
     bool isConnected ();
+
+    std::vector<Vertice> Dijkstra (Vertice start, Vertice finish, int N);
 
     void PrimAlgorithm (Vertice u);
 };

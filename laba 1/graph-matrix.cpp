@@ -82,6 +82,45 @@ bool GraphMatrix<Edge, Vertice>::isConnected () {
 }
 
 template<typename Edge, typename Vertice>
+std::vector<Vertice> GraphMatrix<Edge, Vertice>::Dijkstra (Vertice start, Vertice finish, int N) {
+    int dist[vertices];
+
+    bool sptSet[vertices];
+
+    // Parent array to store
+    // shortest path tree
+    std::vector<Vertice> path;
+    path.resize(vertices);
+
+    // Initialize all distances as
+    // INFINITE and stpSet[] as false
+    for (int i = 0; i < vertices; i++)
+    {
+        path[0] = -1;
+        dist[i] = INT_MAX;
+        sptSet[i] = false;
+    }
+
+    dist[start] = 0;
+
+    for (int count = 0; count < vertices - 1; count++) {
+        int u = minDistance(dist, sptSet);
+
+        sptSet[u] = true;
+
+        for (int v = 0; v < vertices; v++)
+
+            if (!sptSet[v] && adjacencyMatrix[u][v] &&
+                dist[u] + adjacencyMatrix[u][v] < dist[v])
+            {
+                path[v] = u;
+                dist[v] = dist[u] + adjacencyMatrix[u][v];
+            }
+    }
+    return path;
+}
+
+template<typename Edge, typename Vertice>
 void GraphMatrix<Edge, Vertice>::PrimAlgorithm (Vertice u) {
     std::vector<bool> visited;
     int tree[vertices][vertices];

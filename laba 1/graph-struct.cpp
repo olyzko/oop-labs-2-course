@@ -5,6 +5,8 @@
 
 #include <iostream>
 #include <vector>
+#include <list>
+#include <queue>
 
 template<typename Edge, typename Vertice>
 void GraphStruct<Edge, Vertice>::printGraph () {
@@ -85,9 +87,37 @@ bool GraphStruct<Edge, Vertice>::isConnected () {
 template<typename Edge, typename Vertice>
 void GraphStruct<Edge, Vertice>::DFS (Vertice source, bool *visited) {
     visited[source] = true;
+    std::cout << source << " ";
     for (int i=0; i<vertices; ++i)
         if (!visited[i])
             DFS(i, visited);
+}
+
+template<typename Edge, typename Vertice>
+void GraphStruct<Edge, Vertice>::BFS(int source) {
+    bool *visited = new bool[vertices];
+    for(int i = 0; i < vertices; i++)
+        visited[i] = false;
+
+    std::list<Vertice> queue;
+
+    visited[source] = true;
+    queue.push_back(source);
+
+    typename std::vector<Vertice>::iterator i;
+
+    while(!queue.empty()) {
+        source = queue.front();
+        std::cout << source << " ";
+        queue.pop_front();
+
+        for (i = adjacencyList[source].begin(); i != adjacencyList[source].end(); ++i) {
+            if (!visited[*i]) {
+                visited[*i] = true;
+                queue.push_back(*i);
+            }
+        }
+    }
 }
 
 template<typename Edge, typename Vertice>
@@ -121,6 +151,43 @@ std::vector<Vertice> GraphStruct<Edge, Vertice>::Dijkstra (Vertice start, Vertic
     path.push_back(d[finish]);
 
     return path;
+}
+
+template<typename Edge, typename Vertice>
+void GraphStruct<Edge, Vertice>::PrimAlgorithm (Vertice u) {
+    std::priority_queue< std::pair<int, Edge>, std::vector <std::pair<int, Edge>> , std::greater<std::pair<int, Edge>> > pq;
+    int src = 0;
+
+    std::vector<int> key(vertices, INT_MAX);
+    std::vector<int> parent(vertices, -1);
+    std::vector<bool> inMST(vertices, false);
+
+    pq.push(std::make_pair(0, src));
+    key[src] = 0;
+    while (!pq.empty()) {
+        int u = pq.top().second;
+        pq.pop();
+        if(inMST[u]){
+            continue;
+        }
+        inMST[u] = true;  // Include vertex in MST
+        std::list< std::pair<int, int> >::iterator i;
+        for (i = adjacencyList[u].begin(); i != adjacencyList[u].end(); ++i) {
+            int v = (*i).first;
+            int weight = (*i).second;
+
+            if (!inMST[v] && key[v] > weight) {
+                // Updating key of v
+                key[v] = weight;
+                pq.push(std::make_pair(key[v], v));
+                parent[v] = u;
+            }
+        }
+    }
+
+    for (int i = 1; i < vertices; ++i)
+        printf("%d - %d\n", parent[i], i);
+
 }
 
 #endif //LABA_1_GRAPH_STRUCT_CPP

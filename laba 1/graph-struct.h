@@ -12,7 +12,7 @@
 
 template<typename Edge, typename Vertice>
 class GraphStruct {                                                   //weighted non-oriented graph
-    std::vector<std::vector<std::pair<int, int>>> adjacencyList;
+    std::vector<std::vector<std::pair<int, Edge>>> adjacencyList;
     unsigned short int vertices{};
     bool oriented = false;
 public:
@@ -37,7 +37,11 @@ public:
 
     void DFS (Vertice source, bool *visited);
 
+    void BFS(int source);
+
     std::vector<Vertice> Dijkstra (Vertice start, Vertice finish, int N);
+
+    void PrimAlgorithm (Vertice u);
 };
 
 #include "graph-struct.cpp"
