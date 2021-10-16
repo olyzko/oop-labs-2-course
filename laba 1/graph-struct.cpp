@@ -11,44 +11,44 @@
 template<typename Edge, typename Vertice>
 void GraphStruct<Edge, Vertice>::printGraph () {
     for (int i=0; i<vertices; i++) {
-        std::cout << "Adjacency list of vertex of vertex " << i << std::endl;
+        std::cout << "Adjacency list of vertex " << i << "\n";
         for (int j=0; j<adjacencyList[i].size(); j++)
-            std::cout << adjacencyList[i][j].first <<" "<< adjacencyList[i][j].second << "\n";
-        std::cout << std::endl;
+            std::cout << adjacencyList[i]->adjacent_nodes[j].first <<" "<< adjacencyList[i]->adjacent_nodes[j].second << "\n";
+        std::cout << "\n";
     }
 }
 
 template<typename Edge, typename Vertice>
-void GraphStruct<Edge, Vertice>::addEdge (Vertice v1, Vertice v2, Edge weight) {
+void GraphStruct<Edge, Vertice>::addEdge (int v1, int v2, Edge data) {
     bool already_in_graph = false;
     for (int edge = 0; edge < adjacencyList[v1].size(); edge++) {
-        if (adjacencyList[v1][edge].first == v2) {
+        if (adjacencyList[v1]->adjacent_nodes[edge].first == v2) {
             already_in_graph = true;
-            adjacencyList[v1][edge].second = weight;
+            adjacencyList[v1]->adjacent_nodes[edge].second = data;
             if (!oriented)
                 for (int i = 0; i < adjacencyList[v2].size(); i++)
-                    if (adjacencyList[v2][i].first == v1)
-                        adjacencyList[v2][i].second = weight;
+                    if (adjacencyList[v2]->adjacent_nodes[i].first == v1)
+                        adjacencyList[v2]->adjacent_nodes[i].second = data;
         }
     }
     if (!already_in_graph) {
-        adjacencyList[v1].push_back(std::make_pair(v2, weight));
+        adjacencyList[v1].push_back(std::make_pair(v2, data));
         if (!oriented)
-            adjacencyList[v2].push_back(std::make_pair(v1, weight));
+            adjacencyList[v2].push_back(std::make_pair(v1, data));
     }
 }
 
 template<typename Edge, typename Vertice>
-void GraphStruct<Edge, Vertice>::deleteEdge (Vertice v1, Vertice v2) {
+void GraphStruct<Edge, Vertice>::deleteEdge (int v1, int v2) {
     for (int i=0; i<adjacencyList[v1].size(); i++) {
-        if (adjacencyList[v1][i].first == v2) {
+        if (adjacencyList[v1]->adjacent_nodes[i].first == v2) {
             adjacencyList[v1].erase(adjacencyList[v1].begin() + i);
             break;
         }
     }
     if (!oriented)
         for (int i=0; i<adjacencyList[v2].size(); i++) {
-            if (adjacencyList[v2][i].first == v1) {
+            if (adjacencyList[v2]->adjacent_nodes[i].first == v1) {
                 adjacencyList[v2].erase(adjacencyList[v2].begin() + i);
                 break;
             }
@@ -62,7 +62,7 @@ void GraphStruct<Edge, Vertice>::addVertice () {
 }
 
 template<typename Edge, typename Vertice>
-void GraphStruct<Edge, Vertice>::deleteVertice (Vertice num) {
+void GraphStruct<Edge, Vertice>::deleteVertice (int num) {
     for (int i=0; i<adjacencyList[num].size(); i++)
         deleteEdge(num, i);
     adjacencyList.erase(adjacencyList.begin() + num);
@@ -85,7 +85,7 @@ bool GraphStruct<Edge, Vertice>::isConnected () {
 }
 
 template<typename Edge, typename Vertice>
-void GraphStruct<Edge, Vertice>::DFS (Vertice source, bool *visited) {
+void GraphStruct<Edge, Vertice>::DFS (int source, bool *visited) {
     visited[source] = true;
     std::cout << source << " ";
     for (int i=0; i<vertices; ++i)
@@ -121,7 +121,7 @@ void GraphStruct<Edge, Vertice>::BFS(int source) {
 }
 
 template<typename Edge, typename Vertice>
-std::vector<Vertice> GraphStruct<Edge, Vertice>::Dijkstra (Vertice start, Vertice finish, int N) {
+std::vector<Vertice> GraphStruct<Edge, Vertice>::Dijkstra (int start, int finish, int N) {
     std::vector<Vertice> d (N, INT_MAX),  p (N);
     d[start] = 0;
     std::vector<char> u (N);
@@ -135,8 +135,8 @@ std::vector<Vertice> GraphStruct<Edge, Vertice>::Dijkstra (Vertice start, Vertic
         u[v] = true;
 
         for (size_t j=0; j<adjacencyList[v].size(); ++j) {
-            int to = adjacencyList[v][j].first,
-                    len = adjacencyList[v][j].second;
+            int to = adjacencyList[v]->adjacent_nodes[j].first,
+                    len = adjacencyList[v]->adjacent_nodes[j].second;
             if (d[v] + len < d[to]) {
                 d[to] = d[v] + len;
                 p[to] = v;
@@ -154,7 +154,7 @@ std::vector<Vertice> GraphStruct<Edge, Vertice>::Dijkstra (Vertice start, Vertic
 }
 
 template<typename Edge, typename Vertice>
-void GraphStruct<Edge, Vertice>::PrimAlgorithm (Vertice u) {
+void GraphStruct<Edge, Vertice>::PrimAlgorithm (int u) {
     std::priority_queue< std::pair<int, Edge>, std::vector <std::pair<int, Edge>> , std::greater<std::pair<int, Edge>> > pq;
     int src = 0;
 

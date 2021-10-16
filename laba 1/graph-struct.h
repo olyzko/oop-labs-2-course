@@ -1,7 +1,5 @@
-//
-// Created by mihan on 25.09.2021.
-//
 
+#include "graph.h"
 #include <vector>
 #include <iostream>
 #include <algorithm>
@@ -9,10 +7,20 @@
 #ifndef LABA_1_GRAPH_STRUCT_H
 #define LABA_1_GRAPH_STRUCT_H
 
+template<typename Edge, typename Vertice>
+class GraphStructVertice : public GraphVertice<Vertice> {
+public:
+    std::vector<std::pair<int, GraphEdge<Edge> *>> adjacent_nodes;
+
+    explicit GraphStructVertice(Vertice Data) {
+        this->data = Data;
+    }
+};
 
 template<typename Edge, typename Vertice>
-class GraphStruct {                                                   //weighted non-oriented graph
-    std::vector<std::vector<std::pair<int, Edge>>> adjacencyList;
+class GraphStruct : public Graph<Edge, Vertice>{                                                   //weighted non-oriented graph
+private:
+    std::vector<GraphStructVertice<Edge, Vertice> *> adjacencyList;
     unsigned short int vertices{};
     bool oriented = false;
 public:
@@ -21,27 +29,29 @@ public:
         adjacencyList.resize(n);
     }
 
+    ~GraphStruct() { for (auto &node:adjacencyList) delete node; }
+
     GraphStruct () = default;
 
-    void printGraph ();
+    void printGraph () override;
 
-    void addEdge (Vertice v1, Vertice v2, Edge weight);
+    void addEdge (int v1, int v2, Edge weight) override;
 
-    void deleteEdge (Vertice v1, Vertice v2);
+    void deleteEdge (int v1, int v2) override;
 
-    void addVertice ();
+    void addVertice () override;
 
-    void deleteVertice (Vertice num);
+    void deleteVertice (int num) override;
 
-    bool isConnected ();
+    bool isConnected () override;
 
-    void DFS (Vertice source, bool *visited);
+    void DFS (int source, bool *visited) override;
 
-    void BFS(int source);
+    void BFS(int source) override;
 
-    std::vector<Vertice> Dijkstra (Vertice start, Vertice finish, int N);
+    std::vector<Vertice> Dijkstra (int start, int finish, int N)override;
 
-    void PrimAlgorithm (Vertice u);
+    void PrimAlgorithm (int u) override;
 };
 
 #include "graph-struct.cpp"

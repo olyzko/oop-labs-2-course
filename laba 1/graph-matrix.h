@@ -1,20 +1,17 @@
-//
-// Created by mihan on 25.09.2021.
-//
 
+#include "graph.h"
 #include <queue>
 #include <iostream>
 
 #ifndef LABA_1_GRAPH_MATRIX_H
 #define LABA_1_GRAPH_MATRIX_H
 
-#endif //LABA_1_GRAPH_MATRIX_H
-
-const int MAX_VERTICES = 100;
 
 template<typename Edge, typename Vertice>
-class GraphMatrix {
-    Vertice adjacencyMatrix[MAX_VERTICES][MAX_VERTICES];
+class GraphMatrix : public Graph<Edge, Vertice> {
+private:
+    std::vector<GraphVertice<Vertice> *> nodes;
+    std::vector<std::vector<std::pair<bool, GraphEdge<Edge> *>>> edges;
     int vertices;
     bool oriented = false;
 public:
@@ -46,3 +43,5 @@ public:
 
     void PrimAlgorithm (Vertice u);
 };
+
+#endif //LABA_1_GRAPH_MATRIX_H
