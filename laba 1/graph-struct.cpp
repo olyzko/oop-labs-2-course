@@ -2,6 +2,7 @@
 #define LABA_1_GRAPH_STRUCT_CPP
 
 #include "graph-struct.h"
+#include "graph.h"
 
 #include <iostream>
 #include <vector>
@@ -12,7 +13,7 @@ template<typename Edge, typename Vertice>
 void GraphStruct<Edge, Vertice>::printGraph () {
     for (int i=0; i<vertices; i++) {
         std::cout << "Adjacency list of vertex " << i << "\n";
-        for (int j=0; j<adjacencyList[i].size(); j++)
+        for (int j=0; j<adjacencyList.size(); j++)
             std::cout << adjacencyList[i]->adjacent_nodes[j].first <<" "<< adjacencyList[i]->adjacent_nodes[j].second << "\n";
         std::cout << "\n";
     }
@@ -20,53 +21,58 @@ void GraphStruct<Edge, Vertice>::printGraph () {
 
 template<typename Edge, typename Vertice>
 void GraphStruct<Edge, Vertice>::addEdge (int v1, int v2, Edge data) {
-    bool already_in_graph = false;
-    for (int edge = 0; edge < adjacencyList[v1].size(); edge++) {
-        if (adjacencyList[v1]->adjacent_nodes[edge].first == v2) {
-            already_in_graph = true;
-            adjacencyList[v1]->adjacent_nodes[edge].second = data;
-            if (!oriented)
-                for (int i = 0; i < adjacencyList[v2].size(); i++)
-                    if (adjacencyList[v2]->adjacent_nodes[i].first == v1)
-                        adjacencyList[v2]->adjacent_nodes[i].second = data;
-        }
-    }
-    if (!already_in_graph) {
-        adjacencyList[v1].push_back(std::make_pair(v2, data));
-        if (!oriented)
-            adjacencyList[v2].push_back(std::make_pair(v1, data));
-    }
+    auto edge = new GraphEdge<Edge>(data);
+    adjacencyList[v1]->adjacent_nodes.emplace_back(v2, edge);
+    if (!oriented && v1 != v2)
+        adjacencyList[v2]->adjacent_nodes.emplace_back(v1, edge);
+
 }
 
 template<typename Edge, typename Vertice>
 void GraphStruct<Edge, Vertice>::deleteEdge (int v1, int v2) {
-    for (int i=0; i<adjacencyList[v1].size(); i++) {
+    for (int i=0; i<adjacencyList[v1]->adjacent_nodes.size(); i++) {
         if (adjacencyList[v1]->adjacent_nodes[i].first == v2) {
-            adjacencyList[v1].erase(adjacencyList[v1].begin() + i);
+            adjacencyList.erase(adjacencyList.begin() + i);
             break;
         }
     }
     if (!oriented)
-        for (int i=0; i<adjacencyList[v2].size(); i++) {
+        for (int i=0; i<adjacencyList[v1]->adjacent_nodes.size(); i++) {
             if (adjacencyList[v2]->adjacent_nodes[i].first == v1) {
-                adjacencyList[v2].erase(adjacencyList[v2].begin() + i);
+                adjacencyList.erase(adjacencyList.begin() + i);
                 break;
             }
         }
 }
 
 template<typename Edge, typename Vertice>
-void GraphStruct<Edge, Vertice>::addVertice () {
+void GraphStruct<Edge, Vertice>::addVertice (Vertice data) {
     vertices++;
-    adjacencyList.resize(vertices);
+    adjacencyList.push_back(new GraphStructVertice<Edge, Vertice>(data));
 }
 
 template<typename Edge, typename Vertice>
-void GraphStruct<Edge, Vertice>::deleteVertice (int num) {
-    for (int i=0; i<adjacencyList[num].size(); i++)
-        deleteEdge(num, i);
+bool GraphStruct<Edge, Vertice>::deleteVertice (int num) {
+    if (num >= adjacencyList.size()) return false;
+
+    int i = 0;
+    for (auto &e:adjacencyList) {
+        while (i < e->adjacent_nodes.size()) {
+            if (e->adjacent_nodes[i].first == num) {
+                delete e->adjacent_nodes[i].second;
+                e->adjacent_nodes.erase(e->adjacent_nodes.begin() + i);
+            } else {
+                if (e->adjacent_nodes[i].first > num) e->adjacent_nodes[i].first--;
+                i++;
+            }
+        }
+        i = 0;
+    }
+    for (auto &e:adjacencyList[num]->adjacent_nodes) {
+        delete e.second;
+    }
     adjacencyList.erase(adjacencyList.begin() + num);
-    vertices--;
+    return true;
 }
 
 template<typename Edge, typename Vertice>
@@ -99,19 +105,22 @@ void GraphStruct<Edge, Vertice>::BFS(int source) {
     for(int i = 0; i < vertices; i++)
         visited[i] = false;
 
-    std::list<Vertice> queue;
+    std::list<int> queue;
+    std::vector<int> int_vertices;
+    for(int i = 0; i < vertices; i++)
+        int_vertices.push_back(i);
 
     visited[source] = true;
     queue.push_back(source);
 
-    typename std::vector<Vertice>::iterator i;
+    typename std::vector<int>::iterator i;
 
     while(!queue.empty()) {
         source = queue.front();
         std::cout << source << " ";
         queue.pop_front();
 
-        for (i = adjacencyList[source].begin(); i != adjacencyList[source].end(); ++i) {
+        for (i = int_vertices.begin(); i != int_vertices.end(); ++i) {
             if (!visited[*i]) {
                 visited[*i] = true;
                 queue.push_back(*i);
@@ -121,39 +130,48 @@ void GraphStruct<Edge, Vertice>::BFS(int source) {
 }
 
 template<typename Edge, typename Vertice>
-std::vector<Vertice> GraphStruct<Edge, Vertice>::Dijkstra (int start, int finish, int N) {
-    std::vector<Vertice> d (N, INT_MAX),  p (N);
-    d[start] = 0;
-    std::vector<char> u (N);
-    for (int i=0; i<N; ++i) {
-        int v = -1;
-        for (int j=0; j<N; ++j)
-            if (!u[j] && (v == -1 || d[j] < d[v]))
-                v = j;
-        if (d[v] == INT_MAX)
-            break;
-        u[v] = true;
+Edge GraphStruct<Edge, Vertice>::min_distance(int v1, int v2) {
+    if (!(v1 < adjacencyList.size() && v2 < adjacencyList.size())) return -1;
+    std::vector<std::vector<Edge>> dist;
+    std::vector<Edge> tmp;
 
-        for (size_t j=0; j<adjacencyList[v].size(); ++j) {
-            int to = adjacencyList[v]->adjacent_nodes[j].first,
-                    len = adjacencyList[v]->adjacent_nodes[j].second;
-            if (d[v] + len < d[to]) {
-                d[to] = d[v] + len;
-                p[to] = v;
+    Edge m_null = null<Edge>::value;
+
+    for (auto &e:adjacencyList) {
+        tmp.push_back(m_null);
+    }
+
+    for (auto &e:adjacencyList) {
+        dist.push_back(tmp);
+    }
+
+    for (unsigned int i = 0; i < adjacencyList.size(); i++) {
+        for (auto &e:adjacencyList[i]->adjacent_nodes) {
+            dist[i][e.first] = e.second->data;
+        }
+    }
+
+    for (unsigned int i = 0; i < adjacencyList.size(); i++) {
+        for (unsigned int j = 0; j < adjacencyList.size(); j++) {
+            if ((i != j) && (dist[i][j] == m_null)) dist[i][j] = inf<Edge>::value;
+            if (i == j) dist[i][j] = m_null;
+        }
+    }
+
+    for (unsigned int k = 0; k < adjacencyList.size(); k++) {
+        for (unsigned int i = 0; i < adjacencyList.size(); i++) {
+            for (unsigned int j = 0; j < adjacencyList.size(); j++) {
+                if (dist[i][k] + dist[k][j] < dist[i][j])
+                    dist[i][j] = dist[i][k] + dist[k][j];
             }
         }
     }
-    std::vector<Vertice> path;
-    path.push_back (finish);
-    for (int v=finish; v!=start;) {v=p[v];
-        path.push_back (v);}
-    std::reverse (path.begin(), path.end());
-    path.push_back(d[finish]);
 
-    return path;
+    return dist[v1][v2];
 }
 
-template<typename Edge, typename Vertice>
+
+/*template<typename Edge, typename Vertice>
 void GraphStruct<Edge, Vertice>::PrimAlgorithm (int u) {
     std::priority_queue< std::pair<int, Edge>, std::vector <std::pair<int, Edge>> , std::greater<std::pair<int, Edge>> > pq;
     int src = 0;
@@ -161,6 +179,11 @@ void GraphStruct<Edge, Vertice>::PrimAlgorithm (int u) {
     std::vector<int> key(vertices, INT_MAX);
     std::vector<int> parent(vertices, -1);
     std::vector<bool> inMST(vertices, false);
+
+    std::list<std::pair<int, Edge>> int_vertices;
+    for(int i = 0; i < vertices; i++)
+        for (int j = 0; j < adjacencyList[i]->adjacent_nodes.size(); j++)
+             int_vertices.push_back(std::make_pair(i, adjacencyList[i]->adjacent_nodes[j].second));
 
     pq.push(std::make_pair(0, src));
     key[src] = 0;
@@ -171,10 +194,10 @@ void GraphStruct<Edge, Vertice>::PrimAlgorithm (int u) {
             continue;
         }
         inMST[u] = true;  // Include vertex in MST
-        std::list< std::pair<int, int> >::iterator i;
-        for (i = adjacencyList[u].begin(); i != adjacencyList[u].end(); ++i) {
+        typename std::list< std::pair<int, Edge> >::iterator i;
+        for (i = int_vertices.begin(); i != int_vertices.end(); ++i) {
             int v = (*i).first;
-            int weight = (*i).second;
+            Edge weight = (*i).second;
 
             if (!inMST[v] && key[v] > weight) {
                 // Updating key of v
@@ -188,6 +211,6 @@ void GraphStruct<Edge, Vertice>::PrimAlgorithm (int u) {
     for (int i = 1; i < vertices; ++i)
         printf("%d - %d\n", parent[i], i);
 
-}
+}*/
 
 #endif //LABA_1_GRAPH_STRUCT_CPP

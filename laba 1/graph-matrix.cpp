@@ -7,37 +7,65 @@
 #include <vector>
 
 template<typename Edge, typename Vertice>
-Edge GraphMatrix<Edge, Vertice>::getEdge (Vertice v1, Vertice v2) {
-    return adjacencyMatrix[v1][v2];
-}
-
-template<typename Edge, typename Vertice>
 void GraphMatrix<Edge, Vertice>::printGraph () {
     for (int i = 0; i < vertices; i++) {
         for (int j = 0; j < vertices; j++) {
-            std::cout<<adjacencyMatrix[i][j]<<"  ";
+            std::cout<<edges[i][j].second<<"  ";
         }
         std::cout<<"\n";
     }
 }
 
 template<typename Edge, typename Vertice>
-void GraphMatrix<Edge, Vertice>::addEdge (Vertice v1, Vertice v2, Edge weight) {
-    adjacencyMatrix[v1][v2] = weight;
+void GraphMatrix<Edge, Vertice>::addEdge (int v1, int v2, Edge weight) {
+    edges[v1][v2].second = weight;
     if (!oriented) {
-        adjacencyMatrix[v2][v1] = weight;
+        edges[v2][v1].second = weight;
     }
 }
 
 template<typename Edge, typename Vertice>
-void GraphMatrix<Edge, Vertice>::deleteEdge (Vertice v1, Vertice v2) {
-    adjacencyMatrix[v1][v2] = 0;
+void GraphMatrix<Edge, Vertice>::deleteEdge (int v1, int v2) {
+    edges[v1][v2].second = 0;
     if (!oriented)
-        adjacencyMatrix[v2][v1] = 0;
+        edges[v2][v1].second = 0;
 }
 
 template<typename Edge, typename Vertice>
-void GraphMatrix<Edge, Vertice>::BFS(Vertice source) {
+void GraphMatrix<Edge, Vertice>::addVertice(Vertice data) {
+    static const std::pair<bool, GraphEdge<Edge> *> temp = {false, nullptr};
+    static const std::vector<std::pair<bool, GraphEdge<Edge> *>> temp_vec = {temp};
+    nodes.push_back(new GraphMatrix<Edge, Vertice>(data));
+    if (edges.empty()) {
+        edges.emplace_back(temp_vec);
+    } else {
+        edges.emplace_back();
+        for (unsigned int i = 0; i < edges.size(); i++) {
+            edges[i].emplace_back(temp);
+            edges[edges.size() - 1].emplace_back(temp);
+        }
+    }
+}
+
+template<typename Edge, typename Vertice>
+bool GraphMatrix<Edge, Vertice>::deleteVertice(int num) {
+    if (num >= nodes.size()) return false;
+
+    int i = 0;
+    for (auto &e:edges) {
+        delete e[num].second;
+        e.erase(e.begin() + num);
+    }
+    for (auto &e:edges[num]) {
+        delete e.second;
+    }
+    edges.erase(edges.begin() + num);
+    nodes.erase(nodes.begin() + num);
+    return true;
+}
+
+template<typename Edge, typename Vertice>
+void GraphMatrix<Edge, Vertice>::BFS(int source) {
     std::vector <bool> visited;
     visited[source] = true;
     std::queue<int> q;
@@ -56,13 +84,13 @@ void GraphMatrix<Edge, Vertice>::BFS(Vertice source) {
 }
 
 template<typename Edge, typename Vertice>
-void GraphMatrix<Edge, Vertice>::DFS (Vertice st, bool *visited)
+void GraphMatrix<Edge, Vertice>::DFS (int st, bool *visited)
 {
     int r;
     std::cout<<st+1<<" ";
     visited[st] = true;
     for (r=0; r<vertices; r++)
-        if ((adjacencyMatrix[st][r]!=0) && (!visited[r]))
+        if ((edges[st][r].first) && (!visited[r]))
             DFS(r, visited);
 }
 
@@ -82,52 +110,49 @@ bool GraphMatrix<Edge, Vertice>::isConnected () {
 }
 
 template<typename Edge, typename Vertice>
-std::vector<Vertice> GraphMatrix<Edge, Vertice>::Dijkstra (Vertice start, Vertice finish, int N) {
-    int dist[vertices];
+Edge GraphMatrix<Edge, Vertice>::min_distance(int v1, int v2) {
+    if (!(v1 < nodes.size() && v2 < nodes.size())) return -1;
+    std::vector<std::vector<Edge>> dist;
+    std::vector<Edge> tmp;
 
-    bool sptSet[vertices];
+    Edge m_null = null<Edge>::value;
 
-    // Parent array to store
-    // shortest path tree
-    std::vector<Vertice> path;
-    path.resize(vertices);
-
-    // Initialize all distances as
-    // INFINITE and stpSet[] as false
-    for (int i = 0; i < vertices; i++)
-    {
-        path[0] = -1;
-        dist[i] = INT_MAX;
-        sptSet[i] = false;
+    for (auto &e:nodes) {
+        tmp.push_back(m_null);
     }
 
-    dist[start] = 0;
+    for (auto &e:nodes) {
+        dist.push_back(tmp);
+    }
 
-    for (int count = 0; count < vertices - 1; count++) {
-        int u = minDistance(dist, sptSet);
+    for (unsigned int i = 0; i < nodes.size(); i++) {
+        for (unsigned int j = 0; j < nodes.size(); j++) {
+            if (i == j) dist[i][j] = m_null;
+            else if (edges[i][j].first) dist[i][j] = edges[i][j].second->data;
+            else dist[i][j] = inf<Edge>::value;
+        }
+    }
 
-        sptSet[u] = true;
-
-        for (int v = 0; v < vertices; v++)
-
-            if (!sptSet[v] && adjacencyMatrix[u][v] &&
-                dist[u] + adjacencyMatrix[u][v] < dist[v])
-            {
-                path[v] = u;
-                dist[v] = dist[u] + adjacencyMatrix[u][v];
+    for (unsigned int k = 0; k < nodes.size(); k++) {
+        for (unsigned int i = 0; i < nodes.size(); i++) {
+            for (unsigned int j = 0; j < nodes.size(); j++) {
+                if (dist[i][k] + dist[k][j] < dist[i][j])
+                    dist[i][j] = dist[i][k] + dist[k][j];
             }
+        }
     }
-    return path;
-}
 
+    return dist[v1][v2];
+}
+/*
 template<typename Edge, typename Vertice>
-void GraphMatrix<Edge, Vertice>::PrimAlgorithm (Vertice u) {
+void GraphMatrix<Edge, Vertice>::PrimAlgorithm (int u) {
     std::vector<bool> visited;
     int tree[vertices][vertices];
     for (int i=0; i<vertices; i++)
         for (int j=0; j<vertices; j++)
             tree[i][j] = 0;
-    int edges = 0;
+    int edges_num = 0;
     visited[u] = true;
     short int x, y;
     while (edges < vertices - 1) {
@@ -138,9 +163,9 @@ void GraphMatrix<Edge, Vertice>::PrimAlgorithm (Vertice u) {
         for (short int i = 0; i < vertices; i++) {
             if (visited[i]) {
                 for (short int j = 0; j < vertices; j++) {
-                    if (!visited[j] && adjacencyMatrix[i][j] > 0) {
-                        if (min > adjacencyMatrix[i][j]) {
-                            min = adjacencyMatrix[i][j];
+                    if (!visited[j] && edges[i][j].first) {
+                        if (min > edges[i][j].second) {
+                            min = edges[i][j];
                             x = i;
                             y = j;
                         }
@@ -148,8 +173,8 @@ void GraphMatrix<Edge, Vertice>::PrimAlgorithm (Vertice u) {
                 }
             }
         }
-        tree[x][y] = adjacencyMatrix[x][y];
-        tree[y][x] = adjacencyMatrix[y][x];
+        tree[x][y] = edges[x][y];
+        tree[y][x] = edges[y][x];
         visited[y] = true;
         edges++;
     }
@@ -159,7 +184,7 @@ void GraphMatrix<Edge, Vertice>::PrimAlgorithm (Vertice u) {
             std::cout << " " << j;
         std::cout << '\n';
     }
-}
+}*/
 
 
 #endif //LABA_1_GRAPH_MATRIX_CPP

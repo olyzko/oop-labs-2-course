@@ -39,9 +39,9 @@ public:
 
     void deleteEdge (int v1, int v2) override;
 
-    void addVertice () override;
+    void addVertice (Vertice data) override;
 
-    void deleteVertice (int num) override;
+    bool deleteVertice (int num) override;
 
     bool isConnected () override;
 
@@ -49,9 +49,9 @@ public:
 
     void BFS(int source) override;
 
-    std::vector<Vertice> Dijkstra (int start, int finish, int N)override;
+    Edge min_distance(int v1, int v2) override;
 
-    void PrimAlgorithm (int u) override;
+    //void PrimAlgorithm (int u) override;
 };
 
 #include "graph-struct.cpp"

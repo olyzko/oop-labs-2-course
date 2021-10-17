@@ -13,35 +13,31 @@ private:
     std::vector<GraphVertice<Vertice> *> nodes;
     std::vector<std::vector<std::pair<bool, GraphEdge<Edge> *>>> edges;
     int vertices;
-    bool oriented = false;
 public:
-    explicit GraphMatrix(int vert_count, bool oriented = false) {
-        for (int i = 0; i < vertices; i++) {
-            for(int j = 0; j < vertices; j++) {
-                adjacencyMatrix[i][j] = 0;
-            }
-        }
+    bool oriented;
+    explicit GraphMatrix(bool Oriented) {
+        oriented = Oriented;
     }
 
-    Edge getEdge (Vertice v1, Vertice v2);
+    void printGraph () override;
 
-    void printGraph ();
+    void addEdge (int v1, int v2, Edge weight) override;
 
-    void addEdge (Vertice v1, Vertice v2, Edge weight);
+    void deleteEdge (int v1, int v2) override;
 
-    void deleteEdge (Vertice v1, Vertice v2);
+    void addVertice(Vertice data) override;
 
-    
+    bool deleteVertice(int num) override;
 
-    void BFS(Vertice source);
+    void BFS(int source)override;
 
-    void DFS (Vertice st, bool *visited);
+    void DFS (int st, bool *visited) override;
 
-    bool isConnected ();
+    bool isConnected () override;
 
-    std::vector<Vertice> Dijkstra (Vertice start, Vertice finish, int N);
+    Edge min_distance(int v1, int v2) override;
 
-    void PrimAlgorithm (Vertice u);
+    //void PrimAlgorithm (int u) override;
 };
 
 #endif //LABA_1_GRAPH_MATRIX_H
