@@ -102,9 +102,6 @@ DataTime gaussEaster(int y)
     float A, B, C, P, Q,
             M, N, D, E;
 
-    // All calculations done
-    // on the basis of
-    // Gauss Easter Algorithm
     A = y % 19;
     B = y % 4;
     C = y % 7;
@@ -116,23 +113,17 @@ DataTime gaussEaster(int y)
     E = (int)(2 * B + 4 * C + 6 * D + N) % 7;
     auto days = (short )(22 + D + E);
 
-    // A corner case,
-    // when D is 29
     if ((D == 29) && (E == 6)) {
         easterDay.setMonth(4);
         easterDay.setDay(19);
         return easterDay;
     }
-        // Another corner case,
-        // when D is 28
     else if ((D == 28) && (E == 6)) {
         easterDay.setMonth(4);
         easterDay.setDay(19);
         return easterDay;
     }
     else {
-        // If days > 31, move to April
-        // April = 4th Month
         if (days > 31) {
             easterDay.setMonth(4);
             easterDay.setDay(days - 31);
@@ -146,5 +137,76 @@ DataTime gaussEaster(int y)
     }
 }
 
+template<typename T>
+bool operator > (const DataTime &d1, const DataTime &d2) {
+    if(d1.year >= d2.year){
+        if(d1.month >= d2.month){
+            if(d1.day >= d2.day){
+                if(d1.hour >= d2.hour) {
+                    if (d1.minute >= d2.minute) {
+                        if (d1.second > d2.second) {
+                            return true;
+                        } else return false;
+                    } else return false;
+                } else return false;
+            } else return false;
+        } else return false;
+    } else return false;
+}
 
+template<typename T>
+bool operator < (const DataTime &d1, const DataTime &d2) {
+    if(d1.year <= d2.year){
+        if(d1.month <= d2.month){
+            if(d1.day <= d2.day){
+                if(d1.hour <= d2.hour) {
+                    if (d1.minute <= d2.minute) {
+                        if (d1.second < d2.second) {
+                            return true;
+                        } else return false;
+                    } else return false;
+                } else return false;
+            } else return false;
+        } else return false;
+    } else return false;
+}
+
+template<typename T>
+bool operator == (const DataTime &d1, const DataTime &d2) {
+    if(d1.year == d2.year){
+        if(d1.month == d2.month){
+            if(d1.day == d2.day){
+                if(d1.hour == d2.hour) {
+                    if (d1.minute == d2.minute) {
+                        if (d1.second == d2.second) {
+                            return true;
+                        } else return false;
+                    } else return false;
+                } else return false;
+            } else return false;
+        } else return false;
+    } else return false;
+}
+
+template<typename T>
+bool operator != (const DataTime &d1, const DataTime &d2) {
+    if(d1 == d2)
+        return false;
+    return true;
+}
+
+template<typename T>
+bool operator >= (const DataTime &d1, const DataTime &d2) {
+    if(d1 < d2)
+        return false;
+    return true;
+}
+
+
+template<typename T>
+bool operator <= (const DataTime &d1, const DataTime &d2) {
+    if(d1 > d2)
+        return false;
+    return true;
+}
 

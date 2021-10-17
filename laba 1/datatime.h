@@ -30,6 +30,15 @@ public:
     bool parseInput (const std::string &input);
 
     bool isGregorian (DataTime data);
+
+    friend bool operator > (const DataTime &d1, const DataTime &d2);
+    friend bool operator < (const DataTime &d1, const DataTime &d2);
+    friend bool operator >= (const DataTime &d1, const DataTime &d2);
+    friend bool operator <= (const DataTime &d1, const DataTime &d2);
+    friend bool operator == (const DataTime &d1, const DataTime &d2);
+    friend bool operator != (const DataTime &d1, const DataTime &d2);
+
+
 };
 
 #endif //LABA_1_DATATIME_H
