@@ -48,10 +48,17 @@ bool DataTime::isGregorian (DataTime data) {
     return true;
 }
 
+long DataTime::yeartoDays (DataTime data) {
+    long res = data.year * 365 + data.year/4 - data.year/100 + data.year/400;
+    for (int i=1; i<data.month; i++)
+        res += data.monthDays[i];
+    res += data.day;
 
+    return res;
+}
 
-std::string weekday(int y, int m, int d) {
-    long a = yeartoDays(y, m, d);
+std::string DataTime::weekday(DataTime data) {
+    long a = yeartoDays(data);
     int b = ((a - 2) % 7);
     switch (b) {
         case 0:

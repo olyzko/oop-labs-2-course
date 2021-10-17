@@ -33,6 +33,10 @@ public:
 
     bool isGregorian (DataTime data);
 
+    long yeartoDays (DataTime data);
+
+    std::string weekday(DataTime data);
+
     friend bool operator > (const DataTime &d1, const DataTime &d2);
     friend bool operator < (const DataTime &d1, const DataTime &d2);
     friend bool operator >= (const DataTime &d1, const DataTime &d2);
