@@ -25,6 +25,8 @@ bool DataTime::parseInput (const std::string &input) {
     std::string secondStr = input.substr(16, 2);
     short secondInt = std::stoi(secondStr);
     setSecond(secondInt);
+
+    return true;
 }
 
 bool isLeap (int y) {
@@ -53,7 +55,7 @@ std::string weekday(int y, int m, int d) {
     int b = ((a - 2) % 7);
     switch (b) {
         case 0:
-            return "Saturday";
+            return "Sunday";
         case 1:
             return "Monday";
         case 2:
@@ -66,9 +68,6 @@ std::string weekday(int y, int m, int d) {
             return "Friday";
         case 6:
             return "Saturday";
-        case 7:
-            return "Sunday";
-
     }
 }
 
@@ -99,14 +98,14 @@ DataTime gaussEaster(int y)
     easterDay.setHour(0);
     easterDay.setMinute(0);
     easterDay.setSecond(0);
-    float A, B, C, P, Q,
+    double A, B, C, P, Q,
             M, N, D, E;
 
     A = y % 19;
     B = y % 4;
     C = y % 7;
-    P = (float)floor(y / 100);
-    Q = (float)floor((13 + 8 * P) / 25);
+    P = (double)floor(y / 100);
+    Q = (double)floor((13 + 8 * P) / 25);
     M = (int)(15 - Q + P - P / 4) % 30;
     N = (int)(4 + P - P / 4) % 7;
     D = (int)(19 * A + M) % 30;
@@ -202,7 +201,6 @@ bool operator >= (const DataTime &d1, const DataTime &d2) {
     return true;
 }
 
-
 template<typename T>
 bool operator <= (const DataTime &d1, const DataTime &d2) {
     if(d1 > d2)
@@ -210,3 +208,76 @@ bool operator <= (const DataTime &d1, const DataTime &d2) {
     return true;
 }
 
+template<typename T>
+DataTime operator - (const DataTime &d1, const DataTime &d2) {
+    DataTime diff;
+    DataTime temp1 = d1, temp2 = d2;
+    if (temp1.second < temp2.second) {
+        temp1.second += 60;
+        temp1.minute--;
+    }
+    if (temp1.minute < temp2.minute) {
+        temp1.minute += 60;
+        temp1.hour--;
+    }
+    if (temp1.hour < temp2.hour) {
+        temp1.hour += 24;
+        temp1.day--;
+    }
+
+    if (temp1.day < temp2.day) {
+        temp1.day += temp1.monthDays[temp1.month];
+        if (isLeap(temp1.year))
+            temp1.day++;
+        temp1.month--;
+    }
+    if (temp1.month < temp2.month) {
+        temp1.month += 12;
+        temp1.year--;
+    }
+    diff.second = temp1.second - temp2.second;
+    diff.minute = temp1.minute - temp2.minute;
+    diff.hour = temp1.hour - temp2.hour;
+    diff.day = temp1.day - temp2.day;
+    diff.month = temp1.month - temp2.month;
+    diff.year = temp1.year - temp2.year;
+
+    return diff;
+}
+
+template<typename T>
+DataTime operator + (const DataTime &d1, const DataTime &d2) {
+    DataTime sum;
+    DataTime temp1 = d1, temp2 = d2;
+    if (temp1.second + temp2.second >= 60) {
+        temp1.second -= 60;
+        temp1.minute++;
+    }
+    if (temp1.minute + temp2.minute >= 60) {
+        temp1.minute -= 60;
+        temp1.hour++;
+    }
+    if (temp1.hour + temp2.hour >= 60) {
+        temp1.hour -= 60;
+        temp1.day++;
+    }
+    if (temp1.month + temp2.month > 12) {
+        temp1.month -= 12;
+        temp1.year++;
+    }
+
+    if (temp1.day + temp2.day >= temp1.monthDays[temp1.month + temp2.month - 1]) {
+        temp1.day -= temp2.monthDays[temp2.month - 1];
+        if (isLeap(temp1.year) && temp1.monthDays[temp1.month] == 28)
+            temp1.day++;
+        temp1.month++;
+    }
+    sum.second = temp1.second + temp2.second;
+    sum.minute = temp1.minute + temp2.minute;
+    sum.hour = temp1.hour + temp2.hour;
+    sum.day = temp1.day + temp2.day;
+    sum.month = temp1.month + temp2.month;
+    sum.year = temp1.year + temp2.year;
+
+    return sum;
+}

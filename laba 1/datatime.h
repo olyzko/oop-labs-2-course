@@ -27,6 +27,8 @@ public:
     void setMinute (short int Minute) {minute = Minute;}
     void setSecond (short int Second) {second = Second;}
 
+    const int* getMonthDays () {return monthDays;}
+
     bool parseInput (const std::string &input);
 
     bool isGregorian (DataTime data);
@@ -37,6 +39,8 @@ public:
     friend bool operator <= (const DataTime &d1, const DataTime &d2);
     friend bool operator == (const DataTime &d1, const DataTime &d2);
     friend bool operator != (const DataTime &d1, const DataTime &d2);
+    friend DataTime operator - (const DataTime &d1, const DataTime &d2);
+    friend DataTime operator + (const DataTime &d1, const DataTime &d2);
 
 
 };
