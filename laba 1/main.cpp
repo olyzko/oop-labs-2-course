@@ -61,13 +61,27 @@ std::ostream &operator<<(std::ostream &os, std::vector<T> &vec) {
 
 int main() {
     GraphStruct<DataTime, std::string> graph(5);
-    //graph.addEdge("thtf", "ihdvjk", 4);
     DataTime d1 = {0, 0, 0, 5, 45, 0};
+    DataTime d2 = {0, 0, 0, 3, 10, 0};
+    DataTime d3 = {0, 0, 0, 4, 40, 0};
+    DataTime d4 = {0, 0, 0, 1, 20, 0};
+    DataTime d5 = {0, 0, 0, 2, 5, 0};
+    DataTime d6 = {0, 0, 0, 5, 30, 0};
+    graph.addVertice("Kyiv");
+    graph.addVertice("Kharkiv");
+    graph.addVertice("Lviv");
+    graph.addVertice("Odesa");
+    graph.addVertice("Dnipro");
+    graph.addVertice("Poltava");
     graph.addEdge(0, 2, d1);
-    /*graph.addEdge(0, 3, 6);
-    graph.addEdge(1, 2, 2);
-    graph.addEdge(1, 4, 4);
-    graph.addEdge(2, 3, 5);*/
+    graph.addEdge(0, 5, d2);
+    graph.addEdge(0, 3, d3);
+    graph.addEdge(1, 5, d4);
+    graph.addEdge(1, 4, d5);
+    graph.addEdge(0, 4, d6);
+
+    DataTime way = graph.min_distance(2, 4);
+    std::cout<<way<<std::endl;
 
     graph.printGraph();
 

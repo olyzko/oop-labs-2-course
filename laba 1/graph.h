@@ -75,7 +75,7 @@ struct inf<std::vector<T>> {
 
 template<>
 struct inf<DataTime> {
-    const DataTime value = {INT_MAX, SHRT_MAX, SHRT_MAX, SHRT_MAX, SHRT_MAX, SHRT_MAX};
+    DataTime value = {INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX};
 };
 
 template<typename T>
@@ -93,7 +93,7 @@ struct null<double> {
 
 template<>
 struct null<std::string> {
-    const std::string value = "";
+    const std::string value;
 };
 
 template<typename T>
@@ -103,7 +103,7 @@ struct null<std::vector<T>> {
 
 template<>
 struct null<DataTime> {
-    const DataTime value = {0, 0, 0, 0, 0, 0};
+    static constexpr DataTime value = {};
 };
 
 

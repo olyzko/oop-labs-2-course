@@ -257,7 +257,7 @@ DataTime operator + (const DataTime &d1, const DataTime &d2) {
 }
 
 template<typename T>
-std::ostream operator << (std::ostream &os, const DataTime &d1) {
+std::ostream& operator << (std::ostream &os, const DataTime &d1) {
     if (d1.year != 0)
         os << d1.year <<" years ";
     if (d1.month != 0)
@@ -270,6 +270,8 @@ std::ostream operator << (std::ostream &os, const DataTime &d1) {
         os << d1.minute << " minutes ";
     if (d1.second != 0)
         os << d1.second << " seconds";
+
+    return os;
 }
 
 DataTime DataTime::catholicEaster() {
@@ -345,6 +347,7 @@ DataTime DataTime::orthodoxEaster() {
         easterDay.setMonth(3);
         easterDay.setDay(days);
     }
+    return easterDay;
 }
 
 

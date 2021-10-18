@@ -3,6 +3,7 @@
 
 #include "graph-struct.h"
 #include "graph.h"
+#include "datatime.h"
 
 #include <iostream>
 #include <vector>
@@ -130,7 +131,7 @@ void GraphStruct<Edge, Vertice>::BFS(int source) {
 
 template<typename Edge, typename Vertice>
 Edge GraphStruct<Edge, Vertice>::min_distance(int v1, int v2) {
-    if (!(v1 < adjacencyList.size() && v2 < adjacencyList.size())) return -1;
+    if (!(v1 < adjacencyList.size() && v2 < adjacencyList.size())) return null<Edge>::value;
     std::vector<std::vector<Edge>> dist;
     std::vector<Edge> tmp;
 
