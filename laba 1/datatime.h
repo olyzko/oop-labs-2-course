@@ -45,6 +45,8 @@ public:
 
     int weekNumber();
 
+    std::string altDay ();
+
     DataTime catholicEaster();
 
     DataTime orthodoxEaster();

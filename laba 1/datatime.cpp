@@ -104,7 +104,23 @@ int DataTime::weekNumber() {
     return a / 7+1;
 }
 
-//std::string DataTime::altDay (DataTime data);
+std::string DataTime::altDay () {
+    std::string res;
+    res += day%7;
+    if (res == "1")
+        res += "st ";
+    else if (res == "2")
+        res += "nd ";
+    else if (res == "3")
+        res += "rd ";
+    else res += "th ";
+
+    res += weekday();
+    res += " of ";
+    res += monthName(month);
+
+    return res;
+}
 
 template<typename T>
 bool operator > (const DataTime &d1, const DataTime &d2) {
