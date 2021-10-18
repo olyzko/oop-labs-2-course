@@ -77,9 +77,24 @@ long DataTime::yeartoDays () {
 }
 
 std::string DataTime::weekday() {
-    long a = yeartoDays();
-    int b = ((a - 2) % 7);
-    switch (b) {
+    int tempMonth, tempYear;
+    if (month == 1) {
+        tempMonth = 13;
+        tempYear--;
+    }
+    if (month == 2) {
+        tempMonth = 14;
+        tempYear--;
+    }
+    int q = day;
+    int m = tempMonth;
+    int k = tempYear % 100;
+    int j = tempYear / 100;
+    int h
+            = q + 13 * (m + 1) / 5 + k + k / 4 +
+              j / 4 + 5 * j;
+    h = h % 7;
+    switch (h) {
         case 0: return "Sunday";
         case 1: return "Monday";
         case 2: return "Tuesday";
@@ -122,7 +137,6 @@ std::string DataTime::altDay () {
     return res;
 }
 
-template<typename T>
 bool operator > (const DataTime &d1, const DataTime &d2) {
     if(d1.year >= d2.year){
         if(d1.month >= d2.month){
@@ -139,7 +153,6 @@ bool operator > (const DataTime &d1, const DataTime &d2) {
     } else return false;
 }
 
-template<typename T>
 bool operator < (const DataTime &d1, const DataTime &d2) {
     if(d1.year <= d2.year){
         if(d1.month <= d2.month){
@@ -156,7 +169,6 @@ bool operator < (const DataTime &d1, const DataTime &d2) {
     } else return false;
 }
 
-template<typename T>
 bool operator == (const DataTime &d1, const DataTime &d2) {
     if(d1.year == d2.year){
         if(d1.month == d2.month){
@@ -173,22 +185,18 @@ bool operator == (const DataTime &d1, const DataTime &d2) {
     } else return false;
 }
 
-template<typename T>
 bool operator != (const DataTime &d1, const DataTime &d2) {
     return !(d1 == d2);
 }
 
-template<typename T>
 bool operator >= (const DataTime &d1, const DataTime &d2) {
     return !(d1 < d2);
 }
 
-template<typename T>
 bool operator <= (const DataTime &d1, const DataTime &d2) {
     return !(d1 > d2);
 }
 
-template<typename T>
 DataTime operator - (const DataTime &d1, const DataTime &d2) {
     DataTime diff;
     DataTime temp1 = d1, temp2 = d2;
@@ -225,7 +233,6 @@ DataTime operator - (const DataTime &d1, const DataTime &d2) {
     return diff;
 }
 
-template<typename T>
 DataTime operator + (const DataTime &d1, const DataTime &d2) {
     DataTime temp1 = d1, temp2 = d2;
     if (temp1.second + temp2.second >= 60) {
@@ -256,7 +263,6 @@ DataTime operator + (const DataTime &d1, const DataTime &d2) {
     return sum;
 }
 
-template<typename T>
 std::ostream& operator << (std::ostream &os, const DataTime &d1) {
     if (d1.year != 0)
         os << d1.year <<" years ";
@@ -274,7 +280,7 @@ std::ostream& operator << (std::ostream &os, const DataTime &d1) {
     return os;
 }
 
-DataTime DataTime::catholicEaster() {
+DataTime DataTime::catholicEaster() const {
     DataTime easterDay;
     easterDay.setYear(year);
     easterDay.setHour(0);
@@ -318,7 +324,7 @@ DataTime DataTime::catholicEaster() {
     }
 }
 
-DataTime DataTime::orthodoxEaster() {
+DataTime DataTime::orthodoxEaster() const {
     DataTime easterDay;
     easterDay.setYear(year);
     easterDay.setHour(0);

@@ -81,14 +81,11 @@ int main() {
     graph.addEdge(0, 4, d6);
 
     DataTime way = graph.min_distance(2, 4);
-    std::cout<<way<<std::endl;
 
-    graph.printGraph();
+    //graph.printGraph();
 
     //graph.deleteEdge(0, 2);
     //graph.deleteVertice(3);
-
-    graph.printGraph();
 
     system("pause");
     return 0;

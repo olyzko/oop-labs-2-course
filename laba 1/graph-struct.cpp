@@ -2,9 +2,6 @@
 #define LABA_1_GRAPH_STRUCT_CPP
 
 #include "graph-struct.h"
-#include "graph.h"
-#include "datatime.h"
-
 #include <iostream>
 #include <vector>
 #include <list>

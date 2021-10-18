@@ -47,9 +47,9 @@ public:
 
     std::string altDay ();
 
-    DataTime catholicEaster();
+    DataTime catholicEaster() const;
 
-    DataTime orthodoxEaster();
+    DataTime orthodoxEaster() const;
 
     friend bool operator > (const DataTime &d1, const DataTime &d2);
     friend bool operator < (const DataTime &d1, const DataTime &d2);
@@ -59,8 +59,18 @@ public:
     friend bool operator != (const DataTime &d1, const DataTime &d2);
     friend DataTime operator + (const DataTime &d1, const DataTime &d2);
     friend DataTime operator - (const DataTime &d1, const DataTime &d2);
-    DataTime& operator = (const DataTime &d1) {if (this == &d1) return *this; year = d1.year; month = d1.month; day = d1.day; hour = d1.hour; minute = d1.minute; second = d1.second; return *this;};
     friend std::ostream& operator << (std::ostream &os, const DataTime &d1);
+    DataTime& operator = (const DataTime &d1) {
+        if (this == &d1)
+            return *this;
+        year = d1.year;
+        month = d1.month;
+        day = d1.day;
+        hour = d1.hour;
+        minute = d1.minute;
+        second = d1.second;
+        return *this;
+    };
 
 
 };
