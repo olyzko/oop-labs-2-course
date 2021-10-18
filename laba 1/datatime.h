@@ -37,17 +37,17 @@ public:
 
     bool parseInput (const std::string &input);
 
-    bool isGregorian (DataTime data);
+    bool isGregorian ();
 
-    static long yeartoDays (DataTime data);
+    long yeartoDays ();
 
-    static std::string weekday(DataTime data);
+    std::string weekday();
 
-    static int weekNumber(DataTime data);
+    int weekNumber();
 
-    DataTime catholicEaster(int y);
+    DataTime catholicEaster();
 
-    DataTime orthodoxEaster(int y);
+    DataTime orthodoxEaster();
 
     friend bool operator > (const DataTime &d1, const DataTime &d2);
     friend bool operator < (const DataTime &d1, const DataTime &d2);

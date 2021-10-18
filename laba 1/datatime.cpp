@@ -57,27 +57,27 @@ bool isLeap (int y) {
     return true;
 }
 
-bool DataTime::isGregorian (DataTime data) {
-    if (data.hour > 23 || data.minute > 59 || data.second > 59 || data.month > 12)
+bool DataTime::isGregorian () {
+    if (hour > 23 || minute > 59 || second > 59 || month > 12)
         return false;
-    if (data.day > monthDays[month])
-        if (data.month != 2 || data.day != 29 || !isLeap(data.year))
+    if (day > monthDays[month])
+        if (month != 2 || day != 29 || !isLeap(year))
             return false;
 
     return true;
 }
 
-long DataTime::yeartoDays (DataTime data) {
-    long res = data.year * 365 + data.year/4 - data.year/100 + data.year/400;
-    for (int i=1; i<data.month; i++)
-        res += data.monthDays[i];
-    res += data.day;
+long DataTime::yeartoDays () {
+    long res = year * 365 + year/4 - year/100 + year/400;
+    for (int i=1; i<month; i++)
+        res += monthDays[i];
+    res += day;
 
     return res;
 }
 
-std::string DataTime::weekday(DataTime data) {
-    long a = yeartoDays(data);
+std::string DataTime::weekday() {
+    long a = yeartoDays();
     int b = ((a - 2) % 7);
     switch (b) {
         case 0: return "Sunday";
@@ -92,15 +92,15 @@ std::string DataTime::weekday(DataTime data) {
     }
 }
 
-int DataTime::weekNumber(DataTime data) {
+int DataTime::weekNumber() {
     std::map<std::string, int> map2 = { { "Monday" ,1 }, { "Tuesday" , 2},{"Wednesday",3},{"Thursday",4},{"Friday",5},{"Saturday",6},{"Sunday",7} };
     long a = 0;
-    for (int i=1; i<data.month; i++)
-        a += data.monthDays[i];
-    if (isLeap(data.year))
+    for (int i=1; i<month; i++)
+        a += monthDays[i];
+    if (isLeap(year))
         a++;
-    a += data.day;
-    a -= map2[weekday(data)];
+    a += day;
+    a -= map2[weekday()];
     return a / 7+1;
 }
 
@@ -256,19 +256,19 @@ std::ostream operator << (std::ostream &os, const DataTime &d1) {
         os << d1.second << " seconds";
 }
 
-DataTime DataTime::catholicEaster(int y) {
+DataTime DataTime::catholicEaster() {
     DataTime easterDay;
-    easterDay.setYear(y);
+    easterDay.setYear(year);
     easterDay.setHour(0);
     easterDay.setMinute(0);
     easterDay.setSecond(0);
     double A, B, C, P, Q,
             M, N, D, E;
 
-    A = y % 19;
-    B = y % 4;
-    C = y % 7;
-    P = (double)floor(y / 100);
+    A = year % 19;
+    B = year % 4;
+    C = year % 7;
+    P = (double)floor(year / 100);
     Q = (double)floor((13 + 8 * P) / 25);
     M = (int)(15 - Q + P - P / 4) % 30;
     N = (int)(4 + P - P / 4) % 7;
@@ -300,21 +300,21 @@ DataTime DataTime::catholicEaster(int y) {
     }
 }
 
-DataTime DataTime::orthodoxEaster(int y) {
+DataTime DataTime::orthodoxEaster() {
     DataTime easterDay;
-    easterDay.setYear(y);
+    easterDay.setYear(year);
     easterDay.setHour(0);
     easterDay.setMinute(0);
     easterDay.setSecond(0);
     double A, B, C, D, E;
     int M = 15, N = 6, P;
 
-    A = y % 19;
-    B = y % 4;
-    C = y % 7;
+    A = year % 19;
+    B = year % 4;
+    C = year % 7;
     D = (int)(19 * A + M) % 30;
     E = (int)(2 * B + 4 * C + 6 * D + N) % 7;
-    P = 10 + (y/100 - 16 + y/400);
+    P = 10 + (year/100 - 16 + year/400);
     auto days = (int )(22 + D + E + P);
 
     if (days > 61) {
