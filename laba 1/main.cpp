@@ -3,7 +3,7 @@
 #include "graph.h"
 #include "graph-struct.h"
 #include "graph-matrix.h"
-//#include "datatime.h"
+#include "datatime.h"
 
 template<typename T>
 bool operator<(std::vector<T> &vec1, std::vector<T> &vec2) {
@@ -60,13 +60,14 @@ std::ostream &operator<<(std::ostream &os, std::vector<T> &vec) {
 }
 
 int main() {
-    GraphStruct<double, int> graph(5);
+    GraphStruct<DataTime, std::string> graph(5);
     //graph.addEdge("thtf", "ihdvjk", 4);
-    graph.addEdge(0, 2, 3);
-    graph.addEdge(0, 3, 6);
+    DataTime d1 = {0, 0, 0, 5, 45, 0};
+    graph.addEdge(0, 2, d1);
+    /*graph.addEdge(0, 3, 6);
     graph.addEdge(1, 2, 2);
     graph.addEdge(1, 4, 4);
-    graph.addEdge(2, 3, 5);
+    graph.addEdge(2, 3, 5);*/
 
     graph.printGraph();
 

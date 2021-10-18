@@ -7,7 +7,6 @@
 #include <iostream>
 #include <vector>
 #include <list>
-#include <queue>
 
 template<typename Edge, typename Vertice>
 void GraphStruct<Edge, Vertice>::printGraph () {

@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include "datatime.h"
 
 template<typename Edge, typename Vertice>
 class Graph {
@@ -72,6 +73,11 @@ struct inf<std::vector<T>> {
     static constexpr std::vector<T> value = {inf<T>::value};
 };
 
+template<>
+struct inf<DataTime> {
+    const DataTime value = {INT_MAX, SHRT_MAX, SHRT_MAX, SHRT_MAX, SHRT_MAX, SHRT_MAX};
+};
+
 template<typename T>
 struct null;
 
@@ -93,6 +99,11 @@ struct null<std::string> {
 template<typename T>
 struct null<std::vector<T>> {
     static constexpr std::vector<T> value = {};
+};
+
+template<>
+struct null<DataTime> {
+    const DataTime value = {0, 0, 0, 0, 0, 0};
 };
 
 

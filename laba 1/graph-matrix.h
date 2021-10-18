@@ -12,12 +12,12 @@ class GraphMatrix : public Graph<Edge, Vertice> {
 private:
     std::vector<GraphVertice<Vertice> *> nodes;
     std::vector<std::vector<std::pair<bool, GraphEdge<Edge> *>>> edges;
-    int vertices;
+    int vertices{};
 public:
     bool oriented;
-    explicit GraphMatrix(bool Oriented) {
-        oriented = Oriented;
-    }
+    explicit GraphMatrix(bool Oriented);
+
+    ~GraphMatrix();
 
     void printGraph () override;
 

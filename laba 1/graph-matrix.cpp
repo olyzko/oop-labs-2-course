@@ -7,6 +7,19 @@
 #include <vector>
 
 template<typename Edge, typename Vertice>
+GraphMatrix<Edge, Vertice>::GraphMatrix(bool Oriented) {
+    oriented = Oriented;
+}
+
+template<typename Edge, typename Vertice>
+GraphMatrix<Edge, Vertice>::~GraphMatrix() {
+    for (auto &node:nodes) delete node;
+    for (auto &edge:edges)
+        for (int i = 0; i < edge.size(); i++)
+            delete edge[i].second;
+}
+
+template<typename Edge, typename Vertice>
 void GraphMatrix<Edge, Vertice>::printGraph () {
     for (int i = 0; i < vertices; i++) {
         for (int j = 0; j < vertices; j++) {
@@ -144,6 +157,7 @@ Edge GraphMatrix<Edge, Vertice>::min_distance(int v1, int v2) {
 
     return dist[v1][v2];
 }
+
 /*
 template<typename Edge, typename Vertice>
 void GraphMatrix<Edge, Vertice>::PrimAlgorithm (int u) {
