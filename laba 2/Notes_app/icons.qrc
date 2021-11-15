@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/5e83084845874-384x384.png</file>
+        <file>icons/add-to-archive.png</file>
+        <file>icons/archive.png</file>
+        <file>icons/delete.png</file>
+        <file>icons/edit.png</file>
+        <file>icons/main list.png</file>
+        <file>icons/new-note.png</file>
+        <file>icons/save.png</file>
+    </qresource>
+</RCC>
