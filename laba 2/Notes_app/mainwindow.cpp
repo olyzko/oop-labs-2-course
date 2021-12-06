@@ -196,12 +196,13 @@ void MainWindow::on_delete_button_clicked()
 {
     int index = ui->listView_4->currentIndex().row();
 
-    if(ui->listView_4->model() == main_model){
+    if(ui->listView_4->model() == main_model && main_notes.size() != 0){
         QFile file(MAIN_TEXT_PATH+Note::dateToFileName(main_notes[index]->editTime));
         file.remove();
         main_notes.erase(main_notes.begin()+index);
         main_model->removeRow(index);
-    }else {
+    }
+    else if (ui->listView_4->model() == archive_model && archived_notes.size() != 0) {
         QFile file(ARCHIVE_TEXT_PATH+Note::dateToFileName(archived_notes[index]->editTime));
         file.remove();
         archived_notes.erase(archived_notes.begin()+index);
