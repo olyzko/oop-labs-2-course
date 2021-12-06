@@ -76,9 +76,9 @@ private slots:
 
     void on_listView_4_doubleClicked(const QModelIndex &index);
 
-    void on_pushButton_clicked();
-
     void on_sort_button_clicked();
+
+    void on_renameButton_clicked();
 
 private:
     Ui::MainWindow *ui;

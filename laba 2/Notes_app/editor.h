@@ -32,8 +32,6 @@ private:
 protected:
     void showEvent(QShowEvent *event) override;
 
-
-
 private slots:
     void on_toolButton_triggered(QAction *arg1);
     void on_actionSave_triggered();

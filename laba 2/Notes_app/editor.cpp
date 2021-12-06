@@ -57,7 +57,15 @@ void Editor::on_toolButton_clicked()
     }
 
     if(Note::currentNote==nullptr){
-        QString title = QInputDialog::getText(this, "Saving...","Enter file name");
+        QString title;
+        for (;;) {
+        title = QInputDialog::getText(this, "Saving...","Enter file name");
+        if (title.length() > 100)
+            QMessageBox::critical(this, "Warning!", "Your file name is too long");
+        else
+            break;
+        }
+
         Note::currentNote = new Note(title, text, category, time);
         setWindowTitle(Note::currentNote->title);
     } else {
@@ -68,4 +76,3 @@ void Editor::on_toolButton_clicked()
 
     Editor::close();
 }
-

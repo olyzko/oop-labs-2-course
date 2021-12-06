@@ -162,9 +162,10 @@ void MainWindow::on_add_button_clicked()
 
 void MainWindow::on_archive_button_clicked()
 {
+    if (Note::currentNote != nullptr) {
     int index = ui->listView_4->currentIndex().row();
 
-    if(ui->listView_4->model() == main_model){
+    if(ui->listView_4->model() == main_model && main_notes.size() != 0){
         QFile file(MAIN_TEXT_PATH+Note::dateToFileName(main_notes[index]->editTime));
         file.remove();
 
@@ -173,8 +174,10 @@ void MainWindow::on_archive_button_clicked()
 
         archive_model->insertRow(archived_notes.size()-1, new QStandardItem(archived_notes.last()->title));
         main_model->removeRow(index);
+
+        qDebug() << main_notes.size();
     }
-    else if (ui->listView_4->model() == archive_model) {
+    else if (ui->listView_4->model() == archive_model && archived_notes.size() != 0) {
         QFile file(MAIN_TEXT_PATH+Note::dateToFileName(archived_notes[index]->editTime));
         file.remove();
 
@@ -184,6 +187,8 @@ void MainWindow::on_archive_button_clicked()
         main_model->insertRow(main_notes.size()-1, new QStandardItem(main_notes.last()->title));
         archive_model->removeRow(index);
     }
+    }
+    else qDebug() << "aaaaaaaaa";
 }
 
 
@@ -232,6 +237,7 @@ void MainWindow::on_edit_button_clicked()
     }
 }
 
+
 void MainWindow::on_actionNew_triggered()
 {
     on_add_button_clicked();
@@ -264,6 +270,7 @@ void MainWindow::on_listView_4_clicked(const QModelIndex &index)
     ui->edit_button->setEnabled(true);
     ui->archive_button->setEnabled(true);
     ui->delete_button->setEnabled(true);
+    ui->renameButton->setEnabled(true);
 
     if(ui->listView_4->model() == main_model){
         Note::currentNote = main_notes.at(index.row());
@@ -387,6 +394,7 @@ void MainWindow::on_listView_4_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_sort_button_clicked()
 {
+    qDebug() << "aaaaaaaaa";
     insertionSort(main_notes);
     insertionSort(archived_notes);
 
@@ -412,3 +420,22 @@ void MainWindow::insertionSort(QVector<Note*> list)
     }
 }
 
+void MainWindow::on_renameButton_clicked()
+{
+    QString title = QInputDialog::getText(this, "Saving...","Enter file name");
+    int index = ui->listView_4->currentIndex().row();
+
+    if(ui->listView_4->model() == main_model)
+        main_model->removeRow(index);
+    else
+        archive_model->removeRow(index);
+
+    Note::currentNote->title = title;
+    Note::currentNote->editTime = QDateTime::currentDateTime();
+
+    if(ui->listView_4->model() == main_model)
+        main_model->insertRow(main_notes.size()-1, new QStandardItem(main_notes[index]->title));
+    else
+        archive_model->insertRow(archived_notes.size()-1, new QStandardItem(archived_notes[index]->title));
+
+}
